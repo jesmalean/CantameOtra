@@ -1,5 +1,6 @@
 package com.example.cantameotra.ui.theme
 
+import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -9,12 +10,6 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.Font
-import com.example.cantameotra.R
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -39,7 +34,7 @@ private val LightColorScheme = lightColorScheme(
 )
 
 @Composable
-fun NavigationDrawerTheme(
+fun CantameOtraTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
@@ -61,14 +56,3 @@ fun NavigationDrawerTheme(
         content = content
     )
 }
-
-
-
-
-val AudiowideFontFamily = FontFamily(Font(R.font.audiowide))
-
-val TextoMenu = TextStyle(
-    fontFamily = AudiowideFontFamily,
-    fontSize = 20.sp, // Ajusta el tamaño según lo que necesites
-    color = Color.White // Color blanco
-)
