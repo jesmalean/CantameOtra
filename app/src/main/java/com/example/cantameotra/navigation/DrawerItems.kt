@@ -1,83 +1,76 @@
 package com.example.cantameotra.navigation
 
-import androidx.compose.material3.DrawerState
-import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cantameotra.R
-
+import com.example.cantameotra.ui.theme.Rosa
+import com.example.cantameotra.ui.theme.RosaPulsar
+import com.example.cantameotra.ui.theme.White
 
 @Composable
 fun DrawerItems(
     label: String,
     selected: Boolean,
-    iconResId: Int, // Acepta un ID de recurso en lugar de ImageVector
-    contentDescription: String,
-    route: String,
-    navigationController: NavController,
-    coroutineScope: CoroutineScope,
-    drawerState: DrawerState
+    iconResId: Int,
+    onClick: () -> Unit
 ) {
-    NavigationDrawerItem(
-        //label = { Text(text = label) },
-        label = {
-            Text(
-                text = label,
-                style = TextStyle(
-                    fontFamily = FontFamily(Font(R.font.audiowide)),  // Aplica la fuente Audiowide
-                    fontSize = 20.sp,  // Tamaño de la fuente
-                    color = Color.White  // Color blanco
-                ),
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp)  // Padding alrededor del texto
-            )
-        },
-        selected = selected,
-
-        icon = {
-            Image(
-                painter = painterResource(id = iconResId),
-                contentDescription = contentDescription
-            )
-        },
-        modifier = Modifier
-            .padding(vertical = 8.dp)  // Padding general para todo el elemento
-            .background(
-                color = if (selected) colorResource(id = R.color.rosapulsar) else colorResource(id = R.color.rosa), // Fondo para el item seleccionado
-                //shape = RoundedCornerShape(8.dp)  // Bordes redondeados
-            )
-            //.border(1.dp, colorResource(id = R.color.black), RoundedCornerShape(8.dp)) // Borde blanco con bordes redondeados
-            .border(1.dp, colorResource(id = R.color.black)) // Borde blanco con bordes redondeados
-
-            .padding(horizontal = 12.dp, vertical = 8.dp)  // Padding dentro del borde
-        ,
-
-        onClick = {
-            coroutineScope.launch {
-                drawerState.close()
-            }
-            navigationController.navigate(route) {
-                popUpTo(navigationController.graph.startDestinationId) {
-                    saveState = true
-                }
-                launchSingleTop = true
-                restoreState = true
-            }
-        }
+    val backgroundColor by animateColorAsState(
+        targetValue = if (selected) RosaPulsar else Color.Transparent,
+        animationSpec = tween(durationMillis = 300)
     )
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp, vertical = 6.dp)
+            .background(backgroundColor, shape = RoundedCornerShape(16.dp))
+            .clickable { onClick() }
+            .padding(vertical = 12.dp, horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Indicador lateral
+        Box(
+            modifier = Modifier
+                .width(4.dp)
+                .height(24.dp)
+                .background(if (selected) White else Color.Transparent, RoundedCornerShape(4.dp))
+        )
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        // Ícono
+        Image(
+            painter = painterResource(id = iconResId),
+            contentDescription = label,
+            modifier = Modifier.size(28.dp)
+        )
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        // Etiqueta
+        Text(
+            text = label,
+            fontFamily = FontFamily(Font(R.font.audiowide)),
+            color = White,
+            fontSize = 18.sp
+        )
+    }
 }

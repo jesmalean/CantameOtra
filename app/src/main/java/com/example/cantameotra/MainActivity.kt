@@ -5,7 +5,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,23 +21,28 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.example.cantameotra.navigation.DrawerItems
-import com.example.cantameotra.navigation.NavigationHost
-import com.example.cantameotra.ui.theme.NavigationDrawerTheme
-import kotlinx.coroutines.launch
 import com.example.cantameotra.navigation.ItemsProvider
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.colorResource
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
+import com.example.cantameotra.navigation.NavigationHost
+import com.example.cantameotra.ui.theme.CantameOtraTheme
+import com.example.cantameotra.ui.theme.Morado
+import com.example.cantameotra.ui.theme.RosaFondoMenu
+import com.example.cantameotra.ui.theme.White
+import kotlinx.coroutines.launch
+import androidx.compose.ui.Alignment
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.cantameotra.navigation.AnimatedHeaderContent
 
 
 class MainActivity : ComponentActivity() {
@@ -41,7 +50,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            NavigationDrawerTheme {
+            CantameOtraTheme {
                 NavDrawer()
             }
         }
@@ -53,75 +62,91 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavDrawer() {
-    val navigationController = rememberNavController()
+    val navController = rememberNavController()
     val coroutineScope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+
+    // Variable para almacenar la ruta actual
+    val currentBackStackEntry = navController.currentBackStackEntryAsState()
+    val currentRoute = currentBackStackEntry.value?.destination?.route ?: "Inicio"
 
     ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = true,
         drawerContent = {
-            ModalDrawerSheet {
+            ModalDrawerSheet(drawerContainerColor = RosaFondoMenu) {
 
-                Box( modifier = Modifier
-                    .fillMaxWidth()
-                    .height(100.dp)
-                    .background(color = colorResource(id = R.color.morado))) {
-                    //Text(text = "Header content goes here")
-                    Image(
-                        painter = painterResource(id = R.drawable.logo), // Usamos el PNG
-                        contentDescription = "Logo"
+                // ----------- HEADER DINÁMICO -----------
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(160.dp)
+                        .background(Morado),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AnimatedHeaderContent(
+                        screen = currentRoute,
+                        isDrawerOpen = drawerState.isOpen // Pasa el estado del drawer
                     )
-
                 }
+
+                // ----------- MENÚ -----------
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth().fillMaxHeight()
-                        .background(color = colorResource(id = R.color.rosaFondoMenu)) // Color rosa para los elementos
-                        .padding(vertical = 10.dp)
+                        .fillMaxSize()
+                        .background(RosaFondoMenu)
+                        .padding(top = 8.dp)
                 ) {
-                    // Itera sobre los elementos del Drawer
-                    for (item in ItemsProvider.itemsArray) {
+                    ItemsProvider.itemsArray.forEach { item ->
                         DrawerItems(
                             label = item.label,
-                            selected = item.selected,
-                            iconResId = item.icon, // Pasamos el ID del recurso PNG
-                            contentDescription = item.contentDescription,
-                            route = item.route,
-                            navigationController = navigationController,
-                            coroutineScope = coroutineScope,
-                            drawerState = drawerState
+                            iconResId = item.icon,
+                            selected = currentRoute == item.route,
+                            onClick = {
+                                coroutineScope.launch {
+                                    drawerState.close()
+                                    if (currentRoute != item.route) {
+                                        navController.navigate(item.route)
+                                    }
+                                }
+                            }
                         )
                     }
                 }
             }
         }
     ) {
+        val isDrawerOpen = drawerState.isOpen
         Scaffold(
             topBar = {
+                val currentBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentScreen = currentBackStackEntry?.destination?.route ?: ""
+
                 TopAppBar(
                     title = {
-                        Text(text = "TopBar")
+                        val isDrawerOpen = drawerState.isOpen
+                        AnimatedHeaderContent(
+                            screen = currentScreen,
+                            isDrawerOpen = isDrawerOpen
+                        )
                     },
                     navigationIcon = {
                         IconButton(
-                            onClick = {
-                                coroutineScope.launch {
-                                    drawerState.open()
-                                }
-                            }
+                            onClick = { coroutineScope.launch { drawerState.open() } }
                         ) {
                             Image(
-                                painter = painterResource(id = R.drawable.icono_menu), // Usamos el PNG
-                                contentDescription = "Menu"
+                                painter = painterResource(id = R.drawable.icono_menu),
+                                contentDescription = "Menú"
                             )
                         }
-                    }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Morado)
                 )
             }
-        ) {
-            NavigationHost(navController = navigationController)
+        ) { innerPadding ->
+            Box(modifier = Modifier.padding(innerPadding)) {
+                NavigationHost(navController = navController)
+            }
         }
     }
 }
-

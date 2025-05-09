@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -54,20 +55,21 @@ fun FlipCardExample() {
     Column(
         modifier = Modifier
             .fillMaxSize() // Ocupa toda la pantalla
-            .background(Color(0xFF0C0B1A)) // Fondo oscuro
+            .background(color = colorResource(id = R.color.fondo)) // Fondo oscuro
             .verticalScroll(rememberScrollState()) // Permite hacer scroll si hay mucho contenido
             .padding(top = 60.dp, start = 16.dp, end = 16.dp, bottom = 16.dp) // Margen interior
+            .navigationBarsPadding(), // Evita que los elementos choquen con la barra de navegacion de abajo del movil
     ) {
         // Título de la sección
-        Text(
+        /*Text(
             "SALAS",
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
             fontSize = 28.sp,
             color = Color(0xFFE57BC2)
-        )
+        )*/
 
-        Spacer(modifier = Modifier.height(16.dp)) // Espacio entre título y primera tarjeta
+        //Spacer(modifier = Modifier.height(64.dp))
 
         // Primera tarjeta: Sala Verano
         FlipCard(

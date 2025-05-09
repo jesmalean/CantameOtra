@@ -17,15 +17,15 @@ import androidx.compose.ui.text.font.Font
 import com.example.cantameotra.R
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = Morado,
+    secondary = Rosa,
+    tertiary = White
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary = Morado,
+    secondary = Rosa,
+    tertiary = White
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -39,7 +39,7 @@ private val LightColorScheme = lightColorScheme(
 )
 
 @Composable
-fun NavigationDrawerTheme(
+fun CantameOtraTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
@@ -61,8 +61,6 @@ fun NavigationDrawerTheme(
         content = content
     )
 }
-
-
 
 
 val AudiowideFontFamily = FontFamily(Font(R.font.audiowide))

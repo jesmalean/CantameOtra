@@ -9,5 +9,6 @@
     <color name="azul">#4467C2</color>
     <color name="rojo">#D15E60</color>
     <color name="verde">#509C6F</color>
+    <color name ="fondo">#0F1425</color>
 
 </resources>
